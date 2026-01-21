@@ -1,0 +1,42 @@
+name: Auto Resonance
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  resonance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run Proof-of-Resonance Core
+        run: |
+          echo "Running Proof-of-Resonance Core"
+
+      - name: Run Resonant Stability Field
+        run: |
+          echo "Running Resonant Stability Field"
+
+      - name: Upload resonance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: resonance-artifacts
+          path: |
+            outputs/**
+            artifacts/**
+          if-no-files-found: warn
+
+      - name: Generate Build Provenance
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: |
+            outputs/**
+            artifacts/**
